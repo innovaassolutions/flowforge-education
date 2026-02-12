@@ -1,0 +1,304 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   Pearl Vibrant Theme - Warm Light Design System
+   Based on UX Design Specification v1.0
+   ============================================ */
+
+:root {
+  /* --------------------------------------------------
+     Core Background Colors (Warm Cream Base)
+     -------------------------------------------------- */
+  --background: 60 33% 99%;           /* #FFFEFB - Main page backgrounds */
+  --background-subtle: 43 33% 97%;    /* #FAF8F3 - Cards, inputs, sidebars */
+  --background-muted: 43 20% 93%;     /* #F2EFE7 - Hover states, dividers */
+
+  /* --------------------------------------------------
+     Foreground / Text Colors
+     -------------------------------------------------- */
+  --foreground: 40 7% 9%;             /* #171614 - Primary text */
+  --muted-foreground: 40 3% 44%;      /* #71706B - Secondary/muted text */
+
+  /* --------------------------------------------------
+     Brand Accent Colors (Vibrant Orange)
+     -------------------------------------------------- */
+  --accent: 22 97% 48%;               /* #F25C05 - CTAs, links, highlights */
+  --accent-hover: 22 95% 44%;         /* #DC5204 - Button hover states */
+  --accent-subtle: 22 88% 97%;        /* #FEF5EE - Badge backgrounds */
+  --accent-foreground: 0 0% 100%;     /* White text on accent */
+
+  /* --------------------------------------------------
+     Structural Colors
+     -------------------------------------------------- */
+  --border: 43 18% 87%;               /* #E6E2D6 - Borders, separators */
+  --input: 43 33% 97%;                /* Same as background-subtle */
+  --ring: 22 97% 48%;                 /* Same as accent for focus rings */
+
+  /* --------------------------------------------------
+     Semantic Component Colors (shadcn mapping)
+     -------------------------------------------------- */
+  --card: 43 33% 97%;                 /* Cards use subtle background */
+  --card-foreground: 40 7% 9%;        /* Same as foreground */
+
+  --popover: 60 33% 99%;              /* Popovers use main background */
+  --popover-foreground: 40 7% 9%;     /* Same as foreground */
+
+  --primary: 22 97% 48%;              /* Primary = Accent (Orange) */
+  --primary-foreground: 0 0% 100%;    /* White text on primary */
+
+  --secondary: 43 20% 93%;            /* Secondary = Muted background */
+  --secondary-foreground: 40 7% 9%;   /* Dark text on secondary */
+
+  --muted: 43 20% 93%;                /* Muted backgrounds */
+
+  /* --------------------------------------------------
+     Status/Semantic Colors
+     -------------------------------------------------- */
+  --success: 142 76% 36%;             /* #16A34A - Completed states */
+  --success-subtle: 142 76% 93%;      /* #DCFCE7 - Success backgrounds */
+  --success-foreground: 0 0% 100%;    /* White text on success */
+
+  --warning: 45 93% 40%;              /* #CA8A04 - Pending states */
+  --warning-subtle: 48 96% 89%;       /* #FEF9C3 - Warning backgrounds */
+  --warning-foreground: 40 7% 9%;     /* Dark text on warning */
+
+  --destructive: 0 84% 50%;           /* #DC2626 - Error states */
+  --destructive-subtle: 0 93% 94%;    /* #FEE2E2 - Error backgrounds */
+  --destructive-foreground: 0 0% 100%; /* White text on destructive */
+
+  /* --------------------------------------------------
+     Chart Colors (Data Visualization)
+     -------------------------------------------------- */
+  --chart-1: 22 97% 48%;              /* Orange (Primary) */
+  --chart-2: 180 70% 38%;             /* Teal (Secondary) */
+  --chart-3: 142 76% 36%;             /* Green (Success) */
+  --chart-4: 45 93% 40%;              /* Amber (Warning) */
+  --chart-5: 262 83% 58%;             /* Purple (Accent) */
+
+  /* --------------------------------------------------
+     Design Tokens
+     -------------------------------------------------- */
+  --radius: 0.5rem;                   /* 8px - Base border radius */
+
+  /* Legacy brand colors (for backward compatibility) */
+  --brand-orange: #F25C05;
+  --brand-orange-dark: #DC5204;
+  --brand-teal: #1D9BA3;
+  --brand-teal-dark: #14737A;
+}
+
+/* ============================================
+   Base Layer - Global Styles
+   ============================================ */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Typography hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+
+  h4 {
+    @apply text-lg md:text-xl;
+  }
+
+  /* Custom scrollbar for warm theme */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background-subtle));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* Selection highlight */
+  ::selection {
+    background: hsl(var(--accent) / 0.2);
+    color: hsl(var(--foreground));
+  }
+}
+
+/* ============================================
+   Component Layer - Custom Components
+   ============================================ */
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium;
+    @apply hover:bg-[hsl(var(--accent-hover))] transition-colors;
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground px-4 py-2 rounded-lg font-medium;
+    @apply border border-border;
+    @apply hover:bg-muted transition-colors;
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-foreground px-4 py-2 rounded-lg font-medium;
+    @apply hover:bg-muted transition-colors;
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  .card {
+    @apply bg-card rounded-xl p-6 border border-border;
+    @apply shadow-sm;
+  }
+
+  .card-elevated {
+    @apply bg-card rounded-xl p-6 border border-border;
+    @apply shadow-md;
+  }
+
+  .input {
+    @apply bg-input text-foreground px-4 py-2 rounded-lg;
+    @apply border border-border;
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent;
+    @apply placeholder:text-muted-foreground;
+  }
+
+  .link {
+    @apply text-primary hover:text-[hsl(var(--accent-hover))] transition-colors;
+    @apply underline-offset-4 hover:underline;
+  }
+
+  .badge {
+    @apply px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .badge-success {
+    @apply bg-[hsl(var(--success-subtle))] text-[hsl(var(--success))] border border-[hsl(var(--success)/0.3)];
+  }
+
+  .badge-warning {
+    @apply bg-[hsl(var(--warning-subtle))] text-[hsl(var(--warning))] border border-[hsl(var(--warning)/0.3)];
+  }
+
+  .badge-error {
+    @apply bg-[hsl(var(--destructive-subtle))] text-destructive border border-destructive/30;
+  }
+
+  .badge-info {
+    @apply bg-[hsl(var(--accent-subtle))] text-primary border border-primary/30;
+  }
+}
+
+/* ============================================
+   Utility Layer - Custom Utilities
+   ============================================ */
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .bg-gradient-brand {
+    @apply bg-gradient-to-r from-[#F25C05] to-[#1D9BA3];
+  }
+
+  .bg-gradient-warm {
+    @apply bg-gradient-to-br from-[hsl(var(--background))] to-[hsl(var(--background-subtle))];
+  }
+
+  .shadow-soft {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .shadow-soft-lg {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  .glass {
+    @apply bg-white/80 backdrop-blur-lg border border-border/50;
+  }
+
+  .container-narrow {
+    @apply max-w-3xl mx-auto px-4;
+  }
+
+  .container-wide {
+    @apply max-w-6xl mx-auto px-4;
+  }
+}
+
+/* ============================================
+   Animation Utilities (via tailwindcss-animate)
+   ============================================ */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}

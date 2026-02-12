@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Rounded orange square background -->
+  <rect x="32" y="32" width="448" height="448" rx="96" ry="96" fill="#F25C05"/>
+  <!-- Two overlapping speech bubbles - communication/conversation -->
+  <!-- Back bubble (slightly offset) -->
+  <rect x="170" y="140" width="220" height="150" rx="28" ry="28" fill="rgba(255,255,255,0.45)"/>
+  <polygon points="210,290 195,340 260,290" fill="rgba(255,255,255,0.45)"/>
+  <!-- Front bubble -->
+  <rect x="130" y="190" width="220" height="150" rx="28" ry="28" fill="white"/>
+  <polygon points="290,340 325,390 280,340" fill="white"/>
+  <!-- Three dots in front bubble -->
+  <circle cx="200" cy="265" r="16" fill="#F25C05"/>
+  <circle cx="250" cy="265" r="16" fill="#F25C05"/>
+  <circle cx="300" cy="265" r="16" fill="#F25C05"/>
+</svg>

@@ -1317,17 +1317,17 @@ BEGIN
   -- Generate org slug
   org_slug := lower(regexp_replace(org_name, '[^a-zA-Z0-9]+', '-', 'g'));
   org_slug := trim(both '-' from org_slug);
-  IF EXISTS (SELECT 1 FROM organizations WHERE slug = org_slug) THEN
+  IF EXISTS (SELECT 1 FROM public.organizations WHERE slug = org_slug) THEN
     org_slug := org_slug || '-' || substr(md5(random()::text), 1, 8);
   END IF;
 
   -- Create organization
-  INSERT INTO organizations (id, name, slug, plan, subscription_status)
-  VALUES (uuid_generate_v4(), org_name, org_slug, 'free', 'active')
+  INSERT INTO public.organizations (id, name, slug, plan, subscription_status)
+  VALUES (gen_random_uuid(), org_name, org_slug, 'free', 'active')
   RETURNING id INTO new_org_id;
 
   -- Create user profile (always company/education user type)
-  INSERT INTO user_profiles (id, organization_id, full_name, email, role, status, user_type)
+  INSERT INTO public.user_profiles (id, organization_id, full_name, email, role, status, user_type)
   VALUES (NEW.id, new_org_id, display_name, NEW.email, 'owner', 'active', 'company');
 
   -- Generate tenant slug
@@ -1336,31 +1336,17 @@ BEGIN
   IF length(tenant_slug) < 3 THEN
     tenant_slug := tenant_slug || '-' || substr(md5(random()::text), 1, 6);
   END IF;
-  IF EXISTS (SELECT 1 FROM tenant_profiles WHERE slug = tenant_slug) THEN
+  IF EXISTS (SELECT 1 FROM public.tenant_profiles WHERE slug = tenant_slug) THEN
     tenant_slug := tenant_slug || '-' || substr(md5(random()::text), 1, 6);
   END IF;
 
   -- Create tenant profile (always school type for education standalone)
-  INSERT INTO tenant_profiles (
+  INSERT INTO public.tenant_profiles (
     user_id, slug, display_name, tenant_type, brand_config, email_config,
     enabled_assessments, subscription_tier, is_active
   ) VALUES (
     NEW.id, tenant_slug, display_name, 'school',
-    '{
-      "logo": null,
-      "colors": {
-        "primary": "#F25C05",
-        "primaryHover": "#DC5204",
-        "secondary": "#1D9BA3",
-        "background": "#FFFEFB",
-        "backgroundSubtle": "#FAF8F3",
-        "text": "#171614",
-        "textMuted": "#71706B",
-        "border": "#E6E2D6"
-      },
-      "fonts": { "heading": "Inter", "body": "Inter" },
-      "showPoweredBy": true
-    }'::jsonb,
+    '{"logo":null,"colors":{"primary":"#F25C05","primaryHover":"#DC5204","secondary":"#1D9BA3","background":"#FFFEFB","backgroundSubtle":"#FAF8F3","text":"#171614","textMuted":"#71706B","border":"#E6E2D6"},"fonts":{"heading":"Inter","body":"Inter"},"showPoweredBy":true}'::jsonb,
     jsonb_build_object('replyTo', NEW.email, 'senderName', display_name),
     ARRAY['education']::TEXT[],
     'starter',

@@ -682,7 +682,7 @@ ALTER TABLE usage_notifications ENABLE ROW LEVEL SECURITY;
 -- ============================================================================
 
 -- Get current user's organization ID
-CREATE OR REPLACE FUNCTION auth.current_user_organization_id()
+CREATE OR REPLACE FUNCTION public.current_user_organization_id()
 RETURNS UUID
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -698,7 +698,7 @@ END;
 $$;
 
 -- Check if user has a permission
-CREATE OR REPLACE FUNCTION auth.user_has_permission(permission_name TEXT)
+CREATE OR REPLACE FUNCTION public.user_has_permission(permission_name TEXT)
 RETURNS BOOLEAN
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -721,7 +721,7 @@ END;
 $$;
 
 -- Education-specific permission check
-CREATE OR REPLACE FUNCTION auth.user_has_education_permission(permission_name TEXT)
+CREATE OR REPLACE FUNCTION public.user_has_education_permission(permission_name TEXT)
 RETURNS BOOLEAN
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -760,7 +760,7 @@ CREATE POLICY "Organization owners can update"
 -- === User Profiles ===
 CREATE POLICY "Users can view profiles in their organization"
   ON user_profiles FOR SELECT
-  USING (organization_id = auth.current_user_organization_id());
+  USING (organization_id = public.current_user_organization_id());
 
 CREATE POLICY "Users can update own profile"
   ON user_profiles FOR UPDATE
@@ -778,48 +778,48 @@ CREATE POLICY "Public can read active tenant profiles by slug"
 -- === Campaigns ===
 CREATE POLICY "Users can view campaigns in their organization"
   ON campaigns FOR SELECT
-  USING (organization_id = auth.current_user_organization_id());
+  USING (organization_id = public.current_user_organization_id());
 
 CREATE POLICY "Users can create campaigns"
   ON campaigns FOR INSERT
-  WITH CHECK (organization_id = auth.current_user_organization_id());
+  WITH CHECK (organization_id = public.current_user_organization_id());
 
 CREATE POLICY "Users can update own campaigns"
   ON campaigns FOR UPDATE
-  USING (organization_id = auth.current_user_organization_id()
-    AND (created_by = auth.uid() OR auth.user_has_permission('manage_campaigns')));
+  USING (organization_id = public.current_user_organization_id()
+    AND (created_by = auth.uid() OR public.user_has_permission('manage_campaigns')));
 
 CREATE POLICY "Admins can delete campaigns"
   ON campaigns FOR DELETE
-  USING (organization_id = auth.current_user_organization_id()
-    AND auth.user_has_permission('manage_campaigns'));
+  USING (organization_id = public.current_user_organization_id()
+    AND public.user_has_permission('manage_campaigns'));
 
 -- === Schools ===
 CREATE POLICY "Users can view schools in their organization"
   ON schools FOR SELECT
-  USING (organization_id = auth.current_user_organization_id());
+  USING (organization_id = public.current_user_organization_id());
 
 CREATE POLICY "Users can create schools in their organization"
   ON schools FOR INSERT
-  WITH CHECK (organization_id = auth.current_user_organization_id());
+  WITH CHECK (organization_id = public.current_user_organization_id());
 
 CREATE POLICY "Users can update schools in their organization"
   ON schools FOR UPDATE
-  USING (organization_id = auth.current_user_organization_id());
+  USING (organization_id = public.current_user_organization_id());
 
 CREATE POLICY "Admins can delete schools in their organization"
   ON schools FOR DELETE
-  USING (organization_id = auth.current_user_organization_id()
-    AND auth.user_has_education_permission('manage_schools'));
+  USING (organization_id = public.current_user_organization_id()
+    AND public.user_has_education_permission('manage_schools'));
 
 -- === Stakeholder Sessions ===
 CREATE POLICY "Users can view sessions in their organization"
   ON stakeholder_sessions FOR SELECT
-  USING (campaign_id IN (SELECT id FROM campaigns WHERE organization_id = auth.current_user_organization_id()));
+  USING (campaign_id IN (SELECT id FROM campaigns WHERE organization_id = public.current_user_organization_id()));
 
 CREATE POLICY "Users can manage sessions in their organization"
   ON stakeholder_sessions FOR ALL
-  USING (campaign_id IN (SELECT id FROM campaigns WHERE organization_id = auth.current_user_organization_id()));
+  USING (campaign_id IN (SELECT id FROM campaigns WHERE organization_id = public.current_user_organization_id()));
 
 -- === Agent Sessions ===
 CREATE POLICY "Users can view agent sessions in their organization"
@@ -828,7 +828,7 @@ CREATE POLICY "Users can view agent sessions in their organization"
     stakeholder_session_id IN (
       SELECT ss.id FROM stakeholder_sessions ss
       JOIN campaigns c ON ss.campaign_id = c.id
-      WHERE c.organization_id = auth.current_user_organization_id()
+      WHERE c.organization_id = public.current_user_organization_id()
     )
   );
 
@@ -842,22 +842,22 @@ CREATE POLICY "Users can view education sessions in their organization"
     participant_token_id IN (
       SELECT ept.id FROM education_participant_tokens ept
       JOIN schools s ON ept.school_id = s.id
-      WHERE s.organization_id = auth.current_user_organization_id()
+      WHERE s.organization_id = public.current_user_organization_id()
     )
   );
 
 -- === Education Access Codes ===
 CREATE POLICY "Users can view access codes in their organization"
   ON education_access_codes FOR SELECT
-  USING (school_id IN (SELECT id FROM schools WHERE organization_id = auth.current_user_organization_id()));
+  USING (school_id IN (SELECT id FROM schools WHERE organization_id = public.current_user_organization_id()));
 
 CREATE POLICY "Users can create access codes in their organization"
   ON education_access_codes FOR INSERT
-  WITH CHECK (school_id IN (SELECT id FROM schools WHERE organization_id = auth.current_user_organization_id()));
+  WITH CHECK (school_id IN (SELECT id FROM schools WHERE organization_id = public.current_user_organization_id()));
 
 CREATE POLICY "Users can update access codes in their organization"
   ON education_access_codes FOR UPDATE
-  USING (school_id IN (SELECT id FROM schools WHERE organization_id = auth.current_user_organization_id()));
+  USING (school_id IN (SELECT id FROM schools WHERE organization_id = public.current_user_organization_id()));
 
 CREATE POLICY "Anyone can validate active codes"
   ON education_access_codes FOR SELECT
@@ -866,11 +866,11 @@ CREATE POLICY "Anyone can validate active codes"
 -- === Education Participant Tokens ===
 CREATE POLICY "Users can view tokens in their organization"
   ON education_participant_tokens FOR SELECT
-  USING (school_id IN (SELECT id FROM schools WHERE organization_id = auth.current_user_organization_id()));
+  USING (school_id IN (SELECT id FROM schools WHERE organization_id = public.current_user_organization_id()));
 
 CREATE POLICY "Users can update tokens in their organization"
   ON education_participant_tokens FOR UPDATE
-  USING (school_id IN (SELECT id FROM schools WHERE organization_id = auth.current_user_organization_id()));
+  USING (school_id IN (SELECT id FROM schools WHERE organization_id = public.current_user_organization_id()));
 
 CREATE POLICY "Public can look up tokens for session access"
   ON education_participant_tokens FOR SELECT
@@ -879,11 +879,11 @@ CREATE POLICY "Public can look up tokens for session access"
 -- === Education Safeguarding Alerts ===
 CREATE POLICY "Users can view alerts in their organization"
   ON education_safeguarding_alerts FOR SELECT
-  USING (school_id IN (SELECT id FROM schools WHERE organization_id = auth.current_user_organization_id()));
+  USING (school_id IN (SELECT id FROM schools WHERE organization_id = public.current_user_organization_id()));
 
 CREATE POLICY "Users can update alerts in their organization"
   ON education_safeguarding_alerts FOR UPDATE
-  USING (school_id IN (SELECT id FROM schools WHERE organization_id = auth.current_user_organization_id()));
+  USING (school_id IN (SELECT id FROM schools WHERE organization_id = public.current_user_organization_id()));
 
 -- === Education Synthesis ===
 CREATE POLICY "Organization members can view education synthesis"
@@ -921,12 +921,12 @@ CREATE POLICY "Service role can manage vertical voice config"
 
 CREATE POLICY "Users can view their organization voice settings"
   ON organization_voice_settings FOR SELECT
-  USING (organization_id = auth.current_user_organization_id());
+  USING (organization_id = public.current_user_organization_id());
 
 CREATE POLICY "Org admins can manage voice settings"
   ON organization_voice_settings FOR ALL
   USING (
-    organization_id = auth.current_user_organization_id()
+    organization_id = public.current_user_organization_id()
     AND EXISTS (
       SELECT 1 FROM user_profiles
       WHERE user_profiles.id = auth.uid()
@@ -1274,9 +1274,9 @@ CREATE TRIGGER validate_education_agent_session_trigger
 -- 23. GRANT STATEMENTS
 -- ============================================================================
 
-GRANT EXECUTE ON FUNCTION auth.current_user_organization_id TO authenticated;
-GRANT EXECUTE ON FUNCTION auth.user_has_permission TO authenticated;
-GRANT EXECUTE ON FUNCTION auth.user_has_education_permission TO authenticated;
+GRANT EXECUTE ON FUNCTION public.current_user_organization_id TO authenticated;
+GRANT EXECUTE ON FUNCTION public.user_has_permission TO authenticated;
+GRANT EXECUTE ON FUNCTION public.user_has_education_permission TO authenticated;
 GRANT EXECUTE ON FUNCTION generate_access_code TO authenticated;
 GRANT EXECUTE ON FUNCTION generate_participant_token TO authenticated;
 GRANT EXECUTE ON FUNCTION create_participant_from_code TO authenticated;
